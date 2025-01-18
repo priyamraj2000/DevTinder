@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./model/user.js");
+const user = require("./model/user.js");
 const app = express();
 
 app.use(express.json());
@@ -16,6 +17,48 @@ app.post ("/signup",async(req,res)=>{
     res.status(404).send("something went wrong");
    }
 
+})
+
+app.get("/user",async(req,res)=>{
+     const Useremail= req.body.emailId;
+     try {
+       const data= await User.find({emailId: Useremail});
+       res.send(data);
+     } catch (error) {
+        res.status(404).send("Something went wrong");
+     }
+})
+
+app.get("/feed",async(req,res)=>{
+    try {
+        const data= await User.findById("6709478e7ab80ffecc197e4a");
+        res.send(data);
+    } catch (error) {
+        console.log("Something went wrong");
+    }
+})
+
+app.patch("/user",async(req,res)=>{
+   const email= req.body.emailId;
+   const data= req.body;
+   try {
+   const user= await User.findOneAndUpdate({emailId:email},data);
+   console.log(user);
+    res.send("user updated successfully!");
+   } catch (error) {
+    res.send("Something went wrong");
+   }
+})
+
+app.delete("/user", async(req,res)=>{
+    const id= req.body._id;
+    try {
+        const count= await User.deleteOne({_id:id});
+       res.send(count);
+    } catch (error) {
+       res.send("something went wrong");
+    }
+    
 })
 
 connectDB()
